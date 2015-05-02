@@ -1,17 +1,34 @@
 package auth.aws.veechie.com.awsauth;
 
-import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 
 public class UserProfile extends ActionBarActivity {
+
+    public final String TAG = this.getClass().getSimpleName();
+    protected TextView mSuccessFullLoginMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
+
+        Intent intent = getIntent();
+        String displayName = intent.getStringExtra("USER_NAME");
+        Log.i(TAG, displayName);
+
+        mSuccessFullLoginMessage = (TextView) findViewById(R.id.successful_login_textView);
+        mSuccessFullLoginMessage.setText(String.format(
+                getResources().getString(R.string.user_profile_text_view),
+                displayName
+        ));
+
     }
 
     @Override

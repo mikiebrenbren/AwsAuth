@@ -8,6 +8,8 @@ import android.view.MenuItem;
 
 public class NewUserActivity extends ActionBarActivity {
 
+    public final String TAG = this.getClass().getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

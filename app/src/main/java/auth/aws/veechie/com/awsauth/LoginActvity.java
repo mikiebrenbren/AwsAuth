@@ -34,7 +34,9 @@ public class LoginActvity extends Activity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         ResultCallback<People.LoadPeopleResult>, View.OnClickListener{
 
-private static final String TAG = "android-plus-quickstart";
+    public final String TAG = this.getClass().getSimpleName();
+
+    private static final String USER_NAME = "USER_NAME";
 
 private static final int STATE_DEFAULT = 0;
 private static final int STATE_SIGN_IN = 1;
@@ -210,12 +212,13 @@ private ArrayList<String> mCirclesList;
         // Update the user interface to reflect that the user is signed in.
         mGoogleSignInButton.setEnabled(false);
 
-            Log.i(TAG, "User is signed in");
-            Intent intent = new Intent(this, UserProfile.class);
-            startActivity(intent);
-
         // Retrieve some profile information to personalize our app for the user.
         Person currentUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+
+        Log.i(TAG, "User is signed in");
+        Intent intent = new Intent(this, UserProfile.class);
+        intent.putExtra(USER_NAME,  currentUser.getDisplayName());
+        startActivity(intent);
 
         Log.i(TAG, String.format(
                 getResources().getString(R.string.signed_in_as),

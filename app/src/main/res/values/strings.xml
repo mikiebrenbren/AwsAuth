@@ -42,4 +42,5 @@
     <string name="title_activity_user_profile">UserProfile</string>
     <string name="user_profile_text_view">Login for %s successful!</string>
     <string name="logout_button_menu">New Button</string>
+    <string name="google_plus_logout_button_text">G+ Logout</string>
 </resources>

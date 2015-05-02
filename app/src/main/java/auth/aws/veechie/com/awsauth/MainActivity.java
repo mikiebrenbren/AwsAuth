@@ -53,7 +53,8 @@ public class MainActivity extends FragmentActivity implements
         ResultCallback<People.LoadPeopleResult>, View.OnClickListener,
         CheckBox.OnCheckedChangeListener, GoogleApiClient.ServerAuthCodeCallbacks {
 
-    private static final String TAG = "android-plus-quickstart";
+    public final String TAG = this.getClass().getSimpleName();
+
 
     private static final int STATE_DEFAULT = 0;
     private static final int STATE_SIGN_IN = 1;
