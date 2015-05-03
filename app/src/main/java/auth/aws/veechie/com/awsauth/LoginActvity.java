@@ -127,8 +127,8 @@ private ArrayList<String> mCirclesList;
         mUsernameLoginButton = (Button) findViewById(R.id.username_login);
         mCreateAccountTextView = (TextView) findViewById(R.id.textViewCreateAccount);
 
-        mCirclesList = new ArrayList<String>();
-        mCirclesAdapter = new ArrayAdapter<String>(
+        mCirclesList = new ArrayList<>();
+        mCirclesAdapter = new ArrayAdapter<>(
                 this, R.layout.circle_member, mCirclesList);
 //        mCirclesListView.setAdapter(mCirclesAdapter);
 
