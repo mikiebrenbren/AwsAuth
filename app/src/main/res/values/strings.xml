@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">AwsAuth</string>
 
+    <!--Shared preferences-->
+    <string name="my_shared_preferences">myPreferences</string>
+    <string name="sign_in_progress_PREFKEY">signInProgress</string>
+
+
+
     <string name="circles_title">Visible circles:</string>
     <string name="sign_out_button_name">Sign out</string>
     <string name="revoke_access_button_name">Revoke</string>
@@ -25,7 +31,8 @@
     <string name="title_activity_login_actvity">LoginActvity</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="logout_settings">Logout</string>
+    <string name="action_settings_text">Settings</string>
 
 
     <string name="password_hint">Password</string>
@@ -43,4 +50,9 @@
     <string name="user_profile_text_view">Login for %s successful!</string>
     <string name="logout_button_menu">New Button</string>
     <string name="google_plus_logout_button_text">G+ Logout</string>
+
+    <string name="sign_in_progress">IsSignedInKey</string>
+    <string name="display_name_PREFKEY">DisplayName</string>
+
+
 </resources>

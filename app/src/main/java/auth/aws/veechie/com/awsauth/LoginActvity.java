@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -118,10 +120,23 @@ private ArrayList<String> mCirclesList;
     protected EditText mEmailEditText;
     protected Button mUsernameLoginButton;
 
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_actvity);
+
+//        Intent intent = getIntent();
+//        int comeback = intent.getIntExtra(getResources().getString(R.string.sign_in_progress_PREFKEY), -1);
+//        if(comeback != -1){
+//            mSignInProgress = comeback;
+//            mGoogleSignInButton.setEnabled(true);
+//        }
+
+
+        mSharedPreferences = getSharedPreferences(getResources().getString(R.string.my_shared_preferences), Context.MODE_PRIVATE);
 
         mGoogleSignInButton = (SignInButton) findViewById(R.id.google_sign_in_button);
         mEmailEditText = (EditText) findViewById(R.id.emailEditText);
@@ -134,7 +149,7 @@ private ArrayList<String> mCirclesList;
                 this, R.layout.circle_member, mCirclesList);
 //        mCirclesListView.setAdapter(mCirclesAdapter);
 
-        if (savedInstanceState != null) {
+        if (savedInstanceState != null) { //TODO
             mSignInProgress = savedInstanceState
                     .getInt(SAVED_PROGRESS, STATE_DEFAULT);
         }
@@ -215,11 +230,6 @@ private ArrayList<String> mCirclesList;
         // Retrieve some profile information to personalize our app for the user.
         Person currentUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
 
-        Log.i(TAG, "User is signed in");
-        Intent intent = new Intent(this, UserProfile.class);
-        intent.putExtra(USER_NAME,  currentUser.getDisplayName());
-        startActivity(intent);
-
         Log.i(TAG, String.format(
                 getResources().getString(R.string.signed_in_as),
                 currentUser.getDisplayName()));
@@ -232,8 +242,19 @@ private ArrayList<String> mCirclesList;
         Plus.PeopleApi.loadVisible(mGoogleApiClient, null)
                 .setResultCallback(this);
 
+        if(mSignInProgress == 1) {
+            editor = mSharedPreferences.edit();
+            editor.putInt(getResources().getString(R.string.sign_in_progress_PREFKEY),  mSignInProgress).apply();
+            Log.i(TAG, "User is signed in");
+            Intent intent = new Intent(this, UserProfile.class);
+            intent.putExtra(USER_NAME, currentUser.getDisplayName());
+            intent.putExtra(getResources().getString(R.string.sign_in_progress), mSignInProgress);
+            startActivity(intent);
+            finish();
+        }
+
         // Indicate that the sign in process is complete.
-        mSignInProgress = STATE_DEFAULT;
+//        mSignInProgress = STATE_DEFAULT;
     }
 
     @Override

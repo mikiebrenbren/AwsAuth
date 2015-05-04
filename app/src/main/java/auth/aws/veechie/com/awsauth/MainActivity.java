@@ -150,8 +150,8 @@ public class MainActivity extends FragmentActivity implements
         ((CheckBox) findViewById(R.id.request_auth_code_checkbox)).setOnCheckedChangeListener(this);
         ((CheckBox) findViewById(R.id.has_token_checkbox)).setOnCheckedChangeListener(this);
 
-        mCirclesList = new ArrayList<String>();
-        mCirclesAdapter = new ArrayAdapter<String>(
+        mCirclesList = new ArrayList<>();
+        mCirclesAdapter = new ArrayAdapter<>(
                 this, R.layout.circle_member, mCirclesList);
         mCirclesListView.setAdapter(mCirclesAdapter);
 

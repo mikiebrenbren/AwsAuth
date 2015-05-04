@@ -3,7 +3,11 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="auth.aws.veechie.com.awsauth.UserProfile">
     <item android:id="@+id/action_settings"
-          android:title="@string/action_settings"
+          android:title="@string/action_settings_text"
           android:orderInCategory="100"
           app:showAsAction="never"/>
+    <item android:id="@+id/logout_settings"
+        android:title="@string/logout_settings"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
 </menu>
