@@ -128,26 +128,21 @@ private ArrayList<String> mCirclesList;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_actvity);
 
-//        Intent intent = getIntent();
-//        int comeback = intent.getIntExtra(getResources().getString(R.string.sign_in_progress_PREFKEY), -1);
-//        if(comeback != -1){
-//            mSignInProgress = comeback;
-//            mGoogleSignInButton.setEnabled(true);
-//        }
-
-
         mSharedPreferences = getSharedPreferences(getResources().getString(R.string.my_shared_preferences), Context.MODE_PRIVATE);
-
         mGoogleSignInButton = (SignInButton) findViewById(R.id.google_sign_in_button);
         mEmailEditText = (EditText) findViewById(R.id.emailEditText);
         mPasswordEditText = (EditText) findViewById(R.id.passwordEditText);
         mUsernameLoginButton = (Button) findViewById(R.id.username_login);
         mCreateAccountTextView = (TextView) findViewById(R.id.textViewCreateAccount);
 
+        Intent intent = getIntent();
+        if(intent.getIntExtra(getResources().getString(R.string.user_is_signed_out), -1) == 0){
+            onSignedOut();
+        }
+
         mCirclesList = new ArrayList<>();
         mCirclesAdapter = new ArrayAdapter<>(
                 this, R.layout.circle_member, mCirclesList);
-//        mCirclesListView.setAdapter(mCirclesAdapter);
 
         if (savedInstanceState != null) { //TODO
             mSignInProgress = savedInstanceState
@@ -173,11 +168,11 @@ private ArrayList<String> mCirclesList;
 
         return builder.build();
     }
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mGoogleApiClient.connect();
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        mGoogleApiClient.connect();
+//    }
 
     @Override
     protected void onStop() {
@@ -225,7 +220,7 @@ private ArrayList<String> mCirclesList;
         Log.i(TAG, "onConnected");
 
         // Update the user interface to reflect that the user is signed in.
-        mGoogleSignInButton.setEnabled(false);
+//        mGoogleSignInButton.setEnabled(false);
 
         // Retrieve some profile information to personalize our app for the user.
         Person currentUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
@@ -400,6 +395,21 @@ private ArrayList<String> mCirclesList;
                                     mStatus.setText(R.string.status_signed_out);
                                 }
                             }).create();
+        }
+    }
+
+    //TODO may need to sign out other preferences from Amazon
+    private void onSignedOut() {
+        // Update the UI to reflect that the user is signed out.
+        mGoogleSignInButton.setEnabled(true);
+//        mGoogleApiClient.disconnect();
+        mSignInProgress = STATE_DEFAULT;
+
+        Log.i(TAG, getResources().getString(R.string.status_signed_out));
+
+        if (mCirclesList != null) {
+            mCirclesList.clear();
+            mCirclesAdapter.notifyDataSetChanged();
         }
     }
 
