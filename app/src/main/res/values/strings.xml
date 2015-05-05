@@ -4,6 +4,7 @@
     <!--Shared preferences-->
     <string name="my_shared_preferences">myPreferences</string>
     <string name="sign_in_progress_PREFKEY">signInProgress</string>
+    <string name="display_name_PREFKEY">displayName</string>
 
 
 
@@ -16,6 +17,7 @@
     <string name="status_loading">Loading…</string>
     <string name="status_signing_in">Signing in with Google+…</string>
     <string name="status_signed_out">Signed out</string>
+    <string name="user_is_signed_out">UserIsSignedOut</string>
     <string name="status_revoke_access">Revoked access</string>
     <string name="status_revoke_access_error">Error revoking access: %s</string>
     <string name="signed_in_as">Signed in as %s</string>
@@ -52,7 +54,7 @@
     <string name="google_plus_logout_button_text">G+ Logout</string>
 
     <string name="sign_in_progress">IsSignedInKey</string>
-    <string name="display_name_PREFKEY">DisplayName</string>
+
 
 
 </resources>

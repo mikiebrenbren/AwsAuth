@@ -19,7 +19,7 @@ public class UserProfile extends ActionBarActivity {
     protected int mIsUserSignedIn;
     protected String userNamePreferences;
     protected SharedPreferences.Editor editor;
-    protected static String displayName;
+    protected static boolean isFirstTimeDisplayNamePopulated = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,17 +41,25 @@ public class UserProfile extends ActionBarActivity {
             setContentView(R.layout.activity_user_profile);
 
             //TODO FIX THIS, MAY HAVE TO PUT THIS DISPLAY NAME IN SHARED PREFS
-            displayName = null;
-            Intent intent = getIntent();
-            if(intent.getStringExtra("USER_NAME") != null) {
-                displayName = intent.getStringExtra("USER_NAME");
-                Log.i(TAG, displayName);
+            if(isFirstTimeDisplayNamePopulated){
+                Log.i(TAG, "inside first time display name populated conditional block");
+                Intent intent = getIntent();
+                String displayName = intent.getStringExtra("USER_NAME");
+                editor = mSharedPreferences.edit();
+                editor.putString(getResources().getString(R.string.display_name_PREFKEY), displayName).apply();
+                isFirstTimeDisplayNamePopulated = false;
             }
+            Log.i(TAG, mSharedPreferences.getString(getResources().getString(R.string.display_name_PREFKEY), "ERROR MESSAGE"));
+//            displayName = null;
+//
+//            if(intent.getStringExtra("USER_NAME") != null) {
+//                displayName =
+//            }
 
             mSuccessFullLoginMessage = (TextView) findViewById(R.id.successful_login_textView);
             mSuccessFullLoginMessage.setText(String.format(
                     getResources().getString(R.string.user_profile_text_view),
-                    displayName
+                    mSharedPreferences.getString(getResources().getString(R.string.display_name_PREFKEY),"ERROR")
             ));
         }
     }
@@ -75,7 +83,11 @@ public class UserProfile extends ActionBarActivity {
             case R.id.action_settings:
                 return true;
             case R.id.logout_settings:
-                Log.i(TAG + " This is the tag", String.valueOf(mSharedPreferences.getInt(getResources().getString(R.string.sign_in_progress_PREFKEY),0)));
+                Log.i(TAG + " Signing out...", String.valueOf(mSharedPreferences.getInt(getResources().getString(R.string.sign_in_progress_PREFKEY),0)));
+                Intent intent = new Intent(this, LoginActvity.class);
+                intent.putExtra(getResources().getString(R.string.user_is_signed_out), 0);
+                startActivity(intent);
+                finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);
