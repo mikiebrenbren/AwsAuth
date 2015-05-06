@@ -1,4 +1,4 @@
-package auth.aws.veechie.com.awsauth;
+package auth.aws.veechie.com.awsauth.throwaway;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -46,6 +46,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import auth.aws.veechie.com.awsauth.R;
 
 
 public class MainActivity extends FragmentActivity implements

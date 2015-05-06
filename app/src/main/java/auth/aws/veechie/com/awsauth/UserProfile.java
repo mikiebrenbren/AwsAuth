@@ -50,12 +50,6 @@ public class UserProfile extends ActionBarActivity {
                 isFirstTimeDisplayNamePopulated = false;
             }
             Log.i(TAG, mSharedPreferences.getString(getResources().getString(R.string.display_name_PREFKEY), "ERROR MESSAGE"));
-//            displayName = null;
-//
-//            if(intent.getStringExtra("USER_NAME") != null) {
-//                displayName =
-//            }
-
             mSuccessFullLoginMessage = (TextView) findViewById(R.id.successful_login_textView);
             mSuccessFullLoginMessage.setText(String.format(
                     getResources().getString(R.string.user_profile_text_view),

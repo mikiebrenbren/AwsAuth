@@ -1,5 +1,7 @@
 package auth.aws.veechie.com.awsauth;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -17,7 +19,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobileconnectors.cognito.CognitoSyncManager;
+import com.amazonaws.mobileconnectors.cognito.Dataset;
+import com.amazonaws.mobileconnectors.cognito.DefaultSyncCallback;
+import com.amazonaws.regions.Regions;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
@@ -28,17 +36,20 @@ import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.android.gms.plus.model.people.PersonBuffer;
-
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class LoginActvity extends Activity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         ResultCallback<People.LoadPeopleResult>, View.OnClickListener{
 
-    public final String TAG = this.getClass().getSimpleName();
+public final String TAG = this.getClass().getSimpleName();
 
-    private static final String USER_NAME = "USER_NAME";
+private static final String USER_NAME = "USER_NAME";
 
 private static final int STATE_DEFAULT = 0;
 private static final int STATE_SIGN_IN = 1;
@@ -115,13 +126,20 @@ private ArrayAdapter<String> mCirclesAdapter;
 private ArrayList<String> mCirclesList;
 
 
-    protected TextView mCreateAccountTextView;
-    protected EditText mPasswordEditText;
-    protected EditText mEmailEditText;
-    protected Button mUsernameLoginButton;
+protected TextView mCreateAccountTextView;
+protected EditText mPasswordEditText;
+protected EditText mEmailEditText;
+protected Button mUsernameLoginButton;
 
-    private SharedPreferences mSharedPreferences;
-    private SharedPreferences.Editor editor;
+private SharedPreferences mSharedPreferences;
+private SharedPreferences.Editor editor;
+
+// Initialize the Amazon Cognito credentials provider
+protected CognitoCachingCredentialsProvider mCredentialsProvider;
+// Initialize the Cognito Sync client
+protected CognitoSyncManager mSyncClient;
+
+protected Dataset mDataset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +157,8 @@ private ArrayList<String> mCirclesList;
         if(intent.getIntExtra(getResources().getString(R.string.user_is_signed_out), -1) == 0){
             onSignedOut();
         }
+
+        initializeCredentialsProvider();
 
         mCirclesList = new ArrayList<>();
         mCirclesAdapter = new ArrayAdapter<>(
@@ -220,7 +240,11 @@ private ArrayList<String> mCirclesList;
         Log.i(TAG, "onConnected");
 
         // Update the user interface to reflect that the user is signed in.
-//        mGoogleSignInButton.setEnabled(false);
+//        mGoogleSignInButton.setEnabled(false); TODO may set this to false
+        getTokenForCognito();
+        cognitoSyncInitialize();
+        Log.d(TAG, " my ID is: " + mCredentialsProvider.getIdentityId());
+
 
         // Retrieve some profile information to personalize our app for the user.
         Person currentUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
@@ -411,6 +435,47 @@ private ArrayList<String> mCirclesList;
             mCirclesList.clear();
             mCirclesAdapter.notifyDataSetChanged();
         }
+    }
+
+    private void getTokenForCognito(){
+
+        GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
+        AccountManager am = AccountManager.get(this);
+        Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+        String token = null;
+        try {
+            token = GoogleAuthUtil.getToken(getApplicationContext(), accounts[0].name,
+                    "audience:server:client_id:"+getResources().getString(R.string.coginito_client_id));
+        } catch (IOException | GoogleAuthException e) {
+            e.printStackTrace();
+        }
+        Map<String, String> logins = new HashMap<>();
+        logins.put(getResources().getString(R.string.login_accounts_google_com), token);
+        mCredentialsProvider.setLogins(logins);
+    }
+
+    private void cognitoSyncInitialize(){
+        mSyncClient = new CognitoSyncManager(
+                this,
+                Regions.US_EAST_1, // Region
+                mCredentialsProvider);
+        // Create a record in a mDataset and synchronize with the server
+        mDataset = mSyncClient.openOrCreateDataset("myDataset");
+        mDataset.put("awsMyTestKey", "awsAuthTestValue");
+        mDataset.synchronize(new DefaultSyncCallback() {
+            @Override
+            public void onSuccess(Dataset dataset, List newRecords) {
+                Log.i(TAG, "Successful cognito sync");
+            }
+        });
+    }
+
+    private void initializeCredentialsProvider(){
+        mCredentialsProvider = new CognitoCachingCredentialsProvider(
+                this, // Context
+                getResources().getString(R.string.identity_pool_id), // Identity Pool ID
+                Regions.US_EAST_1 // Region
+        );
     }
 
 }
