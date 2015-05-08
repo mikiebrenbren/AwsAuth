@@ -1,7 +1,5 @@
 package auth.aws.veechie.com.awsauth;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -19,13 +17,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.cognito.CognitoSyncManager;
 import com.amazonaws.mobileconnectors.cognito.Dataset;
-import com.amazonaws.mobileconnectors.cognito.DefaultSyncCallback;
-import com.amazonaws.regions.Regions;
-import com.google.android.gms.auth.GoogleAuthException;
-import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
@@ -36,11 +31,8 @@ import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.android.gms.plus.model.people.PersonBuffer;
-import java.io.IOException;
+
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class LoginActvity extends Activity implements
@@ -158,7 +150,7 @@ protected Dataset mDataset;
             onSignedOut();
         }
 
-        initializeCredentialsProvider();
+//        initializeCredentialsProvider();  TODO COGNITO
 
         mCirclesList = new ArrayList<>();
         mCirclesAdapter = new ArrayAdapter<>(
@@ -241,8 +233,8 @@ protected Dataset mDataset;
 
         // Update the user interface to reflect that the user is signed in.
 //        mGoogleSignInButton.setEnabled(false); TODO may set this to false
-        getTokenForCognito();
-        cognitoSyncInitialize();
+//        getTokenForCognito();//TODO COGNITO
+//        cognitoSyncInitialize();
         Log.d(TAG, " my ID is: " + mCredentialsProvider.getIdentityId());
 
 
@@ -437,45 +429,45 @@ protected Dataset mDataset;
         }
     }
 
-    private void getTokenForCognito(){
-
-        GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
-        AccountManager am = AccountManager.get(this);
-        Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-        String token = null;
-        try {
-            token = GoogleAuthUtil.getToken(getApplicationContext(), accounts[0].name,
-                    "audience:server:client_id:"+getResources().getString(R.string.coginito_client_id));
-        } catch (IOException | GoogleAuthException e) {
-            e.printStackTrace();
-        }
-        Map<String, String> logins = new HashMap<>();
-        logins.put(getResources().getString(R.string.login_accounts_google_com), token);
-        mCredentialsProvider.setLogins(logins);
-    }
-
-    private void cognitoSyncInitialize(){
-        mSyncClient = new CognitoSyncManager(
-                this,
-                Regions.US_EAST_1, // Region
-                mCredentialsProvider);
-        // Create a record in a mDataset and synchronize with the server
-        mDataset = mSyncClient.openOrCreateDataset("myDataset");
-        mDataset.put("awsMyTestKey", "awsAuthTestValue");
-        mDataset.synchronize(new DefaultSyncCallback() {
-            @Override
-            public void onSuccess(Dataset dataset, List newRecords) {
-                Log.i(TAG, "Successful cognito sync");
-            }
-        });
-    }
-
-    private void initializeCredentialsProvider(){
-        mCredentialsProvider = new CognitoCachingCredentialsProvider(
-                this, // Context
-                getResources().getString(R.string.identity_pool_id), // Identity Pool ID
-                Regions.US_EAST_1 // Region
-        );
-    }
+//    private void getTokenForCognito(){
+//
+//        GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
+//        AccountManager am = AccountManager.get(this);
+//        Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+//        String token = null;
+//        try {
+//            token = GoogleAuthUtil.getToken(getApplicationContext(), accounts[0].name,
+//                    "audience:server:client_id:"+getResources().getString(R.string.coginito_client_id));
+//        } catch (IOException | GoogleAuthException e) {
+//            e.printStackTrace();
+//        }
+//        Map<String, String> logins = new HashMap<>();
+//        logins.put(getResources().getString(R.string.login_accounts_google_com), token);
+//        mCredentialsProvider.setLogins(logins);
+//    }
+//
+//    private void cognitoSyncInitialize(){
+//        mSyncClient = new CognitoSyncManager(
+//                this,
+//                Regions.US_EAST_1, // Region
+//                mCredentialsProvider);
+//        // Create a record in a mDataset and synchronize with the server
+//        mDataset = mSyncClient.openOrCreateDataset("myDataset");
+//        mDataset.put("awsMyTestKey", "awsAuthTestValue");
+//        mDataset.synchronize(new DefaultSyncCallback() {
+//            @Override
+//            public void onSuccess(Dataset dataset, List newRecords) {
+//                Log.i(TAG, "Successful cognito sync");
+//            }
+//        });
+//    }
+//
+//    private void initializeCredentialsProvider(){
+//        mCredentialsProvider = new CognitoCachingCredentialsProvider(
+//                this, // Context
+//                getResources().getString(R.string.identity_pool_id), // Identity Pool ID
+//                Regions.US_EAST_1 // Region
+//        );
+//    }
 
 }
