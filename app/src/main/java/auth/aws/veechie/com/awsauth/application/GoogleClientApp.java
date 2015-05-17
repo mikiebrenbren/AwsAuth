@@ -29,7 +29,7 @@ public class GoogleClientApp extends Application{
 //   STATE_IN_PROGRESS: This state indicates that we have started an intent to
 //                      resolve an error, and so we should not start further
 //                      intents until the current intent completes.
-    private int mSignInProgress;
+    private int mSignInProgress = 0;//todo this is automatically set to state_default because user profile is the main activity and if user is not signed in it must send the user back to the login page this logic may need to be changed
 
     // Used to store the PendingIntent most recently returned by Google Play
     // services until the user clicks 'sign in'.

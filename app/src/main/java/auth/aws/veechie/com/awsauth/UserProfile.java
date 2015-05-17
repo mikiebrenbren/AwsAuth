@@ -28,7 +28,8 @@ public class UserProfile extends ActionBarActivity {
 
         mSharedPreferences = getSharedPreferences(getResources().getString(R.string.my_shared_preferences), Context.MODE_PRIVATE);
         mIsUserSignedIn = ((GoogleClientApp)this.getApplication()).getmSignInProgress();
-        Log.i(TAG + " this is the signInProgress taken from application context", String.valueOf(((GoogleClientApp)this.getApplication()).getmSignInProgress()));
+        ((GoogleClientApp) this.getApplication()).getmSignInProgress();
+        Log.i(TAG + " this is the signInProgress taken from application context", String.valueOf(((GoogleClientApp) this.getApplication()).getmSignInProgress()));
         String s = String.valueOf(getIntent().getIntExtra(getResources().getString(R.string.sign_in_progress), -1));//TODO
         Log.i(TAG + "this is the msigninprogress integer", s);
 

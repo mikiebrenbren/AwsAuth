@@ -3,7 +3,6 @@ package auth.aws.veechie.com.awsauth;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -180,7 +179,7 @@ protected Dataset mDataset;
 //        mGoogleSignInButton.setEnabled(false); TODO may set this to false
 //        getTokenForCognito();//TODO COGNITO
 //        cognitoSyncInitialize();
-        Log.d(TAG, " my ID is: " + mCredentialsProvider.getIdentityId());
+//        Log.d(TAG, " my ID is: " + mCredentialsProvider.getIdentityId());//todo aws stuff
 
 
         // Retrieve some profile information to personalize our app for the user.
