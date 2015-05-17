@@ -198,7 +198,8 @@ protected Dataset mDataset;
         Plus.PeopleApi.loadVisible(((GoogleClientApp)this.getApplication()).getGoogleApiClient(), null)
                 .setResultCallback(this);
 
-        if(((GoogleClientApp)this.getApplication()).getmSignInProgress() == 1) {
+        if(((GoogleClientApp)this.getApplication()).getmSignInProgress() == STATE_SIGN_IN) {
+            //todo I don't think this is necessary after putting the google client at the application context
             editor = mSharedPreferences.edit();
             editor.putInt(getResources().getString(R.string.sign_in_progress_PREFKEY),  ((GoogleClientApp)this.getApplication()).getmSignInProgress()).apply();
             Log.i(TAG, "User is signed in");
@@ -229,10 +230,10 @@ protected Dataset mDataset;
         } else if (((GoogleClientApp)this.getApplication()).getmSignInProgress() != STATE_IN_PROGRESS) {
             // We do not have an intent in progress so we should store the latest
             // error resolution intent for use when the sign in button is clicked.
-            mSignInIntent = result.getResolution();
+            ((GoogleClientApp)this.getApplication()).setmSignInIntent(result.getResolution());
             mSignInError = result.getErrorCode();
 
-            if (mSignInProgress == STATE_SIGN_IN) {
+            if (((GoogleClientApp)this.getApplication()).getmSignInProgress() == STATE_SIGN_IN) {
                 // STATE_SIGN_IN indicates the user already clicked the sign in button
                 // so we should continue processing errors until the user is signed in
                 // or they click cancel.
@@ -248,7 +249,7 @@ protected Dataset mDataset;
      * setting to enable device networking, etc.
      */
     private void resolveSignInError() {
-        if (mSignInIntent != null) {
+        if (((GoogleClientApp)this.getApplication()).getmSignInIntent() != null) {
             // We have an intent which will allow our user to sign in or
             // resolve an error.  For example if the user needs to
             // select an account to sign in with, or if they need to consent
@@ -259,16 +260,16 @@ protected Dataset mDataset;
                 // OnConnectionFailed callback.  This will allow the user to
                 // resolve the error currently preventing our connection to
                 // Google Play services.
-                mSignInProgress = STATE_IN_PROGRESS;
-                startIntentSenderForResult(mSignInIntent.getIntentSender(),
+                ((GoogleClientApp)this.getApplication()).setmSignInProgress(STATE_IN_PROGRESS);
+                startIntentSenderForResult(((GoogleClientApp)this.getApplication()).getmSignInIntent().getIntentSender(),
                         RC_SIGN_IN, null, 0, 0, 0);
             } catch (IntentSender.SendIntentException e) {
                 Log.i(TAG, "Sign in intent could not be sent: "
                         + e.getLocalizedMessage());
                 // The intent was canceled before it was sent.  Attempt to connect to
                 // get an updated ConnectionResult.
-                mSignInProgress = STATE_SIGN_IN;
-                mGoogleApiClient.connect();
+                ((GoogleClientApp)this.getApplication()).setmSignInProgress(STATE_SIGN_IN);
+                ((GoogleClientApp)this.getApplication()).getGoogleApiClient().connect();
             }
         } else {
             // Google Play services wasn't able to provide an intent for some
@@ -279,24 +280,25 @@ protected Dataset mDataset;
         }
     }
     @Override
-    protected void onActivityResult(int requestCode, int resultCode,
-                                    Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         switch (requestCode) {
             case RC_SIGN_IN:
                 if (resultCode == RESULT_OK) {
                     // If the error resolution was successful we should continue
                     // processing errors.
-                    mSignInProgress = STATE_SIGN_IN;
+                    ((GoogleClientApp)this.getApplication()).setmSignInProgress(STATE_SIGN_IN);
                 } else {
                     // If the error resolution was not successful or the user canceled,
                     // we should stop processing errors.
-                    mSignInProgress = STATE_DEFAULT;
+                    ((GoogleClientApp)this.getApplication()).setmSignInProgress(STATE_DEFAULT);
                 }
 
-                if (!mGoogleApiClient.isConnecting()) {
+
+                if (!((GoogleClientApp)this.getApplication()).getGoogleApiClient().isConnecting()) {
                     // If Google Play services resolved the issue with a dialog then
                     // onStart is not called so we need to re-attempt connection here.
-                    mGoogleApiClient.connect();
+                    ((GoogleClientApp)this.getApplication()).getGoogleApiClient().connect();
                 }
                 break;
         }
@@ -326,7 +328,7 @@ protected Dataset mDataset;
         // The connection to Google Play services was lost for some reason.
         // We call connect() to attempt to re-establish the connection or get a
         // ConnectionResult that we can attempt to resolve.
-        mGoogleApiClient.connect();
+        ((GoogleClientApp)this.getApplication()).getGoogleApiClient().connect();
     }
 
     private Dialog createErrorDialog() {
@@ -339,7 +341,7 @@ protected Dataset mDataset;
                         @Override
                         public void onCancel(DialogInterface dialog) {
                             Log.e(TAG, "Google Play services resolution cancelled");
-                            mSignInProgress = STATE_DEFAULT;
+                            ((GoogleClientApp)LoginActvity.this.getApplication()).setmSignInProgress(STATE_DEFAULT);
                             mStatus.setText(R.string.status_signed_out);
                         }
                     });
@@ -352,7 +354,7 @@ protected Dataset mDataset;
                                 public void onClick(DialogInterface dialog, int which) {
                                     Log.e(TAG, "Google Play services error could not be "
                                             + "resolved: " + mSignInError);
-                                    mSignInProgress = STATE_DEFAULT;
+                                    ((GoogleClientApp)LoginActvity.this.getApplication()).setmSignInProgress(STATE_DEFAULT);
                                     mStatus.setText(R.string.status_signed_out);
                                 }
                             }).create();
@@ -364,7 +366,7 @@ protected Dataset mDataset;
         // Update the UI to reflect that the user is signed out.
         mGoogleSignInButton.setEnabled(true);
 //        mGoogleApiClient.disconnect();
-        mSignInProgress = STATE_DEFAULT;
+        ((GoogleClientApp)this.getApplication()).setmSignInProgress(STATE_DEFAULT);
 
         Log.i(TAG, getResources().getString(R.string.status_signed_out));
 

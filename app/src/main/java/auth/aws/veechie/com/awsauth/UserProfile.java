@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import auth.aws.veechie.com.awsauth.application.GoogleClientApp;
+
 
 public class UserProfile extends ActionBarActivity {
 
@@ -17,7 +19,6 @@ public class UserProfile extends ActionBarActivity {
     protected TextView mSuccessFullLoginMessage;
     protected SharedPreferences mSharedPreferences;
     protected int mIsUserSignedIn;
-    protected String userNamePreferences;
     protected SharedPreferences.Editor editor;
     protected static boolean isFirstTimeDisplayNamePopulated = true;
 
@@ -26,15 +27,14 @@ public class UserProfile extends ActionBarActivity {
         super.onCreate(savedInstanceState);
 
         mSharedPreferences = getSharedPreferences(getResources().getString(R.string.my_shared_preferences), Context.MODE_PRIVATE);
-        mIsUserSignedIn = mSharedPreferences.getInt(getResources().getString(R.string.sign_in_progress_PREFKEY), -1);
-        Log.i(TAG + " this is the shared preferences", String.valueOf(mSharedPreferences.getInt(getResources().getString(R.string.sign_in_progress_PREFKEY), -1)));
+        mIsUserSignedIn = ((GoogleClientApp)this.getApplication()).getmSignInProgress();
+        Log.i(TAG + " this is the signInProgress taken from application context", String.valueOf(((GoogleClientApp)this.getApplication()).getmSignInProgress()));
         String s = String.valueOf(getIntent().getIntExtra(getResources().getString(R.string.sign_in_progress), -1));//TODO
         Log.i(TAG + "this is the msigninprogress integer", s);
 
         if(mIsUserSignedIn != 1){
             Log.i(TAG, "Sending back to login...");
             Intent intent = new Intent(this, LoginActvity.class);
-            intent.putExtra( String.valueOf(mSharedPreferences.getInt(getResources().getString(R.string.sign_in_progress_PREFKEY), -1)), getResources().getString(R.string.sign_in_progress));
             startActivity(intent);
             finish();
         } else {

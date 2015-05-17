@@ -10,11 +10,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
  */
 public class GoogleClientApp extends Application{
 
-    private static final int STATE_DEFAULT = 0;
-    private static final int STATE_SIGN_IN = 1;
-    private static final int STATE_IN_PROGRESS = 2;
-    private static final int RC_SIGN_IN = 0;
-
     // GoogleApiClient wraps our service connection to Google Play services and
 // provides access to the users sign in state and Google's APIs.
     private GoogleApiClient mGoogleApiClient;
@@ -37,8 +32,16 @@ public class GoogleClientApp extends Application{
     private int mSignInProgress;
 
     // Used to store the PendingIntent most recently returned by Google Play
-// services until the user clicks 'sign in'.
+    // services until the user clicks 'sign in'.
     private PendingIntent mSignInIntent;
+
+    public PendingIntent getmSignInIntent() {
+        return mSignInIntent;
+    }
+
+    public void setmSignInIntent(PendingIntent mSignInIntent) {
+        this.mSignInIntent = mSignInIntent;
+    }
 
     public int getmSignInProgress() {
         return mSignInProgress;
