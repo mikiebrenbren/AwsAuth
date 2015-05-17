@@ -41,6 +41,11 @@ public class LoginActvity extends Activity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         ResultCallback<People.LoadPeopleResult>, View.OnClickListener{
 
+    private static final int STATE_DEFAULT = 0;
+    private static final int STATE_SIGN_IN = 1;
+    private static final int STATE_IN_PROGRESS = 2;
+    private static final int RC_SIGN_IN = 0;
+
 public final String TAG = this.getClass().getSimpleName();
 
 private static final String USER_NAME = "USER_NAME";
@@ -102,7 +107,9 @@ protected Dataset mDataset;
         // Button listeners
         mGoogleSignInButton.setOnClickListener(this);
         mCreateAccountTextView.setOnClickListener(this);
-        mGoogleApiClient = buildGoogleApiClient();
+
+
+        ((GoogleClientApp) this.getApplication()).setGoogleApiClient(buildGoogleApiClient());
         
     }
 
@@ -128,27 +135,27 @@ protected Dataset mDataset;
     protected void onStop() {
         super.onStop();
 
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
+        if (((GoogleClientApp)this.getApplication()).getGoogleApiClient().isConnected()) {
+            ((GoogleClientApp)this.getApplication()).getGoogleApiClient().disconnect();
         }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(SAVED_PROGRESS, mSignInProgress);
+        outState.putInt(SAVED_PROGRESS, ((GoogleClientApp)this.getApplication()).getmSignInProgress());
     }
 
     @Override
     public void onClick(View v) {
-        if (!mGoogleApiClient.isConnecting()) {
+        if (!((GoogleClientApp)this.getApplication()).getGoogleApiClient().isConnecting()) {
             // We only process button clicks when GoogleApiClient is not transitioning
             // between connected and not connected.
             switch(v.getId()) {
                 case R.id.google_sign_in_button:
 //                    mStatus.setText(R.string.status_signing_in);
-                    mSignInProgress = STATE_SIGN_IN;
-                    mGoogleApiClient.connect();
+                    ((GoogleClientApp)this.getApplication()).setmSignInProgress(STATE_SIGN_IN);
+                    ((GoogleClientApp)this.getApplication()).getGoogleApiClient().connect();
                     break;
                 case R.id.textViewCreateAccount:
                     Log.i(TAG, "Create account text view has been pressed");
@@ -177,7 +184,7 @@ protected Dataset mDataset;
 
 
         // Retrieve some profile information to personalize our app for the user.
-        Person currentUser = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+        Person currentUser = Plus.PeopleApi.getCurrentPerson(((GoogleClientApp)this.getApplication()).getGoogleApiClient());
 
         Log.i(TAG, String.format(
                 getResources().getString(R.string.signed_in_as),
@@ -188,16 +195,16 @@ protected Dataset mDataset;
 //                getResources().getString(R.string.signed_in_as),
 //                currentUser.getDisplayName()));
 
-        Plus.PeopleApi.loadVisible(mGoogleApiClient, null)
+        Plus.PeopleApi.loadVisible(((GoogleClientApp)this.getApplication()).getGoogleApiClient(), null)
                 .setResultCallback(this);
 
-        if(mSignInProgress == 1) {
+        if(((GoogleClientApp)this.getApplication()).getmSignInProgress() == 1) {
             editor = mSharedPreferences.edit();
-            editor.putInt(getResources().getString(R.string.sign_in_progress_PREFKEY),  mSignInProgress).apply();
+            editor.putInt(getResources().getString(R.string.sign_in_progress_PREFKEY),  ((GoogleClientApp)this.getApplication()).getmSignInProgress()).apply();
             Log.i(TAG, "User is signed in");
             Intent intent = new Intent(this, UserProfile.class);
             intent.putExtra(USER_NAME, currentUser.getDisplayName());
-            intent.putExtra(getResources().getString(R.string.sign_in_progress), mSignInProgress);
+            intent.putExtra(getResources().getString(R.string.sign_in_progress), ((GoogleClientApp)this.getApplication()).getmSignInProgress());
             startActivity(intent);
             finish();
         }
@@ -219,7 +226,7 @@ protected Dataset mDataset;
             // may not be installed, such as the Android Wear application. You may need to use a
             // second GoogleApiClient to manage the application's optional APIs.
             Log.w(TAG, "API Unavailable.");
-        } else if (mSignInProgress != STATE_IN_PROGRESS) {
+        } else if (((GoogleClientApp)this.getApplication()).getmSignInProgress() != STATE_IN_PROGRESS) {
             // We do not have an intent in progress so we should store the latest
             // error resolution intent for use when the sign in button is clicked.
             mSignInIntent = result.getResolution();

@@ -14,6 +14,7 @@ public class GoogleClientApp extends Application{
     private static final int STATE_SIGN_IN = 1;
     private static final int STATE_IN_PROGRESS = 2;
     private static final int RC_SIGN_IN = 0;
+
     // GoogleApiClient wraps our service connection to Google Play services and
 // provides access to the users sign in state and Google's APIs.
     private GoogleApiClient mGoogleApiClient;
@@ -46,4 +47,14 @@ public class GoogleClientApp extends Application{
     public void setmSignInProgress(int mSignInProgress) {
         this.mSignInProgress = mSignInProgress;
     }
+
+
+    public GoogleApiClient getGoogleApiClient() {
+        return mGoogleApiClient;
+    }
+
+    public void setGoogleApiClient(GoogleApiClient googleApiClient) {
+        mGoogleApiClient = googleApiClient;
+    }
+
 }
