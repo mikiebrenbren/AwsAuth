@@ -60,6 +60,6 @@
 <!--test gitignore-->
 
     <string name="coginito_client_id">1006493570543-m0tm3g7d72u1bdtq96l1994klass5uur.apps.googleusercontent.com</string>
-    <string name="identity_pool_id">us-east\-1:fd9d5915\-0aab\-425b\-9d59\-9faa202fee34</string>
+    <string name="identity_pool_id">us-east-1:fd9d5915-0aab-425b-9d59-9faa202fee34</string>
 
 </resources>

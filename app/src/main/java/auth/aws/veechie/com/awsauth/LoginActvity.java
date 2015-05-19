@@ -1,5 +1,7 @@
 package auth.aws.veechie.com.awsauth;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -8,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +22,8 @@ import android.widget.TextView;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.cognito.CognitoSyncManager;
 import com.amazonaws.mobileconnectors.cognito.Dataset;
-import com.amazonaws.regions.Regions;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
@@ -33,8 +35,12 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.android.gms.plus.model.people.PersonBuffer;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import auth.aws.veechie.com.awsauth.application.CognitoAsyncTasks;
 import auth.aws.veechie.com.awsauth.application.GoogleClientApp;
 
 
@@ -47,36 +53,37 @@ public class LoginActvity extends Activity implements
     private static final int STATE_IN_PROGRESS = 2;
     private static final int RC_SIGN_IN = 0;
 
-public final String TAG = this.getClass().getSimpleName();
+    public final String TAG = this.getClass().getSimpleName();
 
-private static final String USER_NAME = "USER_NAME";
-    // Used to store the error code most recently returned by Google Play services
-// until the user clicks 'sign in'.
-    private int mSignInError;
-private static final String SAVED_PROGRESS = "sign_in_progress";
+    private static final String USER_NAME = "USER_NAME";
+        // Used to store the error code most recently returned by Google Play services
+    // until the user clicks 'sign in'.
+        private int mSignInError;
+    private static final String SAVED_PROGRESS = "sign_in_progress";
 
-private SignInButton mGoogleSignInButton;
-private Button mSignOutButton;
-private Button mRevokeButton;
-private TextView mStatus;
-private ListView mCirclesListView;
-private ArrayAdapter<String> mCirclesAdapter;
-private ArrayList<String> mCirclesList;
+    private SignInButton mGoogleSignInButton;
+    private Button mSignOutButton;
+    private Button mRevokeButton;
+    private TextView mStatus;
+    private ListView mCirclesListView;
+    private ArrayAdapter<String> mCirclesAdapter;
+    private ArrayList<String> mCirclesList;
 
-protected TextView mCreateAccountTextView;
-protected EditText mPasswordEditText;
-protected EditText mEmailEditText;
-protected Button mUsernameLoginButton;
+    protected TextView mCreateAccountTextView;
+    protected EditText mPasswordEditText;
+    protected EditText mEmailEditText;
+    protected Button mUsernameLoginButton;
 
-private SharedPreferences mSharedPreferences;
-private SharedPreferences.Editor editor;
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor editor;
 
-// Initialize the Amazon Cognito credentials provider
-protected CognitoCachingCredentialsProvider mCredentialsProvider;
-// Initialize the Cognito Sync client
-protected CognitoSyncManager mSyncClient;
+    // Initialize the Amazon Cognito credentials provider
+    protected CognitoCachingCredentialsProvider mCredentialsProvider;
+    // Initialize the Cognito Sync client
+    protected CognitoSyncManager mSyncClient;
 
-protected Dataset mDataset;
+    protected Dataset mDataset;
+    private CognitoAsyncTasks mCognitoAsyncTasks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,7 +186,7 @@ protected Dataset mDataset;
 
 //        getTokenForCognito();//TODO COGNITO
 //        cognitoSyncInitialize();
-        Log.d(TAG, " my ID is: " + mCredentialsProvider.getIdentityId());
+//        Log.d(TAG, " my ID is: " + mCognitoAsyncTasks.getIdentity());
 
         // Retrieve some profile information to personalize our app for the user.
         Person currentUser = Plus.PeopleApi.getCurrentPerson(((GoogleClientApp)this.getApplication()).getGoogleApiClient());
@@ -374,22 +381,22 @@ protected Dataset mDataset;
         }
     }
 
-//    private void getTokenForCognito(){
-//
-//        GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
-//        AccountManager am = AccountManager.get(this);
-//        Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-//        String token = null;
-//        try {
-//            token = GoogleAuthUtil.getToken(getApplicationContext(), accounts[0].name,
-//                    "audience:server:client_id:"+getResources().getString(R.string.coginito_client_id));
-//        } catch (IOException | GoogleAuthException e) {
-//            e.printStackTrace();
-//        }
-//        Map<String, String> logins = new HashMap<>();
-//        logins.put(getResources().getString(R.string.login_accounts_google_com), token);
-//        mCredentialsProvider.setLogins(logins);
-//    }
+    private void getTokenForCognito(){
+
+        GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
+        AccountManager am = AccountManager.get(this);
+        Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+        String token = null;
+        try {
+            token = GoogleAuthUtil.getToken(getApplicationContext(), accounts[0].name,
+                    "audience:server:client_id:" + getResources().getString(R.string.coginito_client_id));
+        } catch (IOException | GoogleAuthException e) {
+            e.printStackTrace();
+        }
+        Map<String, String> logins = new HashMap<>();
+        logins.put(getResources().getString(R.string.login_accounts_google_com), token);
+        mCredentialsProvider.setLogins(logins);
+    }
 
 //    private void cognitoSyncInitialize(){
 //        mSyncClient = new CognitoSyncManager(
@@ -409,23 +416,9 @@ protected Dataset mDataset;
 
     private void initializeCredentialsProvider(){
         Log.i(TAG, "Initializing cognito caching...");
-        new InitializeCredentialsProvider().execute();
-    }
-
-    private class InitializeCredentialsProvider extends AsyncTask<Void, Void, CognitoCachingCredentialsProvider>{
-        @Override
-        protected CognitoCachingCredentialsProvider doInBackground(Void... params) {
-            return new CognitoCachingCredentialsProvider(
-                    LoginActvity.this, // Context
-                    getResources().getString(R.string.identity_pool_id), // Identity Pool ID
-                    Regions.US_EAST_1 // Region
-            );
-        }
-        @Override
-        protected void onPostExecute(CognitoCachingCredentialsProvider aVoid) {
-            super.onPostExecute(aVoid);
-            mCredentialsProvider = aVoid;
-        }
+        mCognitoAsyncTasks = new CognitoAsyncTasks();
+        mCognitoAsyncTasks.init(this);
+        mCredentialsProvider = mCognitoAsyncTasks.getCredentialsProvider();
     }
 
 }
