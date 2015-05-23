@@ -54,7 +54,7 @@
     <string name="google_plus_logout_button_text">G+ Logout</string>
 
     <string name="sign_in_progress">IsSignedInKey</string>
-    <string name="login.accounts.google.com">login.accounts.google.com</string>
+    <string name="login.accounts.google.com">accounts.google.com</string>
 
 
 <!--test gitignore-->

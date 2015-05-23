@@ -67,7 +67,6 @@ public class LoginActvity extends Activity implements
     protected EditText mEmailEditText;
     protected Button mUsernameLoginButton;
 
-    private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor editor;
 
     // Initialize the Amazon Cognito credentials provider
@@ -77,6 +76,8 @@ public class LoginActvity extends Activity implements
 
     protected Dataset mDataset;
     private CognitoTasks mCognitoTasks;
+    private SharedPreferences mSharedPreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,13 +177,6 @@ public class LoginActvity extends Activity implements
     public void onConnected(Bundle connectionHint) {
         // Reaching onConnected means we consider the user signed in.
         Log.i(TAG, "onConnected");
-
-//        getTokenForCognito();//TODO COGNITO
-//        cognitoSyncInitialize();
-//        Log.d(TAG, " my ID is: " + mCognitoTasks.getIdentity());
-//        getTokenForCognito();
-        mCognitoTasks.getTokenForCognito(this);
-
 
         // Retrieve some profile information to personalize our app for the user.
         Person currentUser = Plus.PeopleApi.getCurrentPerson(((GoogleClientApp)this.getApplication()).getGoogleApiClient());
@@ -376,23 +370,6 @@ public class LoginActvity extends Activity implements
             mCirclesAdapter.notifyDataSetChanged();
         }
     }
-
-//    private void getTokenForCognito(){
-//
-//        GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
-//        AccountManager am = AccountManager.get(this);
-//        Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-//        String token = null;
-//        try {
-//            token = GoogleAuthUtil.getToken(getApplicationContext(), accounts[0].name,
-//                    "audience:server:client_id:" + getResources().getString(R.string.coginito_client_id));
-//        } catch (IOException | GoogleAuthException e) {
-//            e.printStackTrace();
-//        }
-//        Map<String, String> logins = new HashMap<>();
-//        logins.put(getResources().getString(R.string.login_accounts_google_com), token);
-//        mCredentialsProvider.setLogins(logins);
-//    }
 
 //    private void cognitoSyncInitialize(){
 //        mSyncClient = new CognitoSyncManager(
