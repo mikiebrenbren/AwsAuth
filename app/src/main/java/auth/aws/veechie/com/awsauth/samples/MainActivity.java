@@ -1,4 +1,4 @@
-package auth.aws.veechie.com.awsauth.throwaway;
+package auth.aws.veechie.com.awsauth.samples;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

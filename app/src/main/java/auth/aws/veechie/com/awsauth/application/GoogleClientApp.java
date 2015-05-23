@@ -1,6 +1,5 @@
 package auth.aws.veechie.com.awsauth.application;
 
-import android.app.Application;
 import android.app.PendingIntent;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -8,7 +7,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 /**
  * Created by michaelbrennan on 5/7/15.
  */
-public class GoogleClientApp extends Application{
+public class GoogleClientApp extends CognitoTasks {
 
     // GoogleApiClient wraps our service connection to Google Play services and
 // provides access to the users sign in state and Google's APIs.
