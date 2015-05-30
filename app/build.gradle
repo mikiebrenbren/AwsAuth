@@ -38,5 +38,6 @@ dependencies {
     compile 'com.amazonaws:aws-android-sdk-s3:2.2.1'
     compile 'com.amazonaws:aws-android-sdk-mobileanalytics:2.2.1'
     compile 'com.amazonaws:aws-android-sdk-cognito:2.2.1'
+    compile 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.1'
 
 }
