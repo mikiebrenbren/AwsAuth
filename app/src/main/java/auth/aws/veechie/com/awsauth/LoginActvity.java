@@ -35,6 +35,11 @@ import java.util.ArrayList;
 
 import auth.aws.veechie.com.awsauth.application.CognitoTasks;
 import auth.aws.veechie.com.awsauth.application.GoogleClientApp;
+import auth.aws.veechie.com.awsauth.dynamodb.SaveUserAsync;
+import auth.aws.veechie.com.awsauth.model.User;
+import auth.aws.veechie.com.awsauth.samples.Book;
+import auth.aws.veechie.com.awsauth.samples.BookAsync;
+import auth.aws.veechie.com.awsauth.utils.TimeStamp;
 
 
 public class LoginActvity extends Activity implements
@@ -77,7 +82,6 @@ public class LoginActvity extends Activity implements
     protected Dataset mDataset;
     private CognitoTasks mCognitoTasks;
     private SharedPreferences mSharedPreferences;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,10 +189,24 @@ public class LoginActvity extends Activity implements
                 getResources().getString(R.string.signed_in_as),
                 currentUser.getDisplayName()));
 
-        //TODO send this information to the new successful login activity
-//        mStatus.setText(String.format(
-//                getResources().getString(R.string.signed_in_as),
-//                currentUser.getDisplayName()));
+
+//        User user = new User();
+//        user.setUid(123445);
+//        user.setEmail("awsauth@gmail.com");
+//        user.setUsername("mikieawsauth");
+//
+//        SaveUserAsync saveUserAsync = new SaveUserAsync(this, mCognitoTasks.getCredentialsProvider());
+//        saveUserAsync.execute(user);
+        Book book = new Book();
+        book.setTitle("Great Expectations");
+        book.setAuthor("Charles Dickens");
+        book.setPrice(1299);
+        book.setIsbn("1234567890");
+        book.setHardCover(false);
+
+        BookAsync bookAsync = new BookAsync(this, mCognitoTasks.getCredentialsProvider());
+        bookAsync.execute(book);
+
 
         Plus.PeopleApi.loadVisible(((GoogleClientApp)this.getApplication()).getGoogleApiClient(), null)
                 .setResultCallback(this);
