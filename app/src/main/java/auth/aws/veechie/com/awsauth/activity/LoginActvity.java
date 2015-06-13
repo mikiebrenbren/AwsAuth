@@ -37,7 +37,6 @@ import auth.aws.veechie.com.awsauth.R;
 import auth.aws.veechie.com.awsauth.application.CognitoTasks;
 import auth.aws.veechie.com.awsauth.application.GoogleClientApp;
 import auth.aws.veechie.com.awsauth.dynamodb.RetrieveUser;
-import auth.aws.veechie.com.awsauth.dynamodb.SaveUserAsync;
 import auth.aws.veechie.com.awsauth.model.User;
 import auth.aws.veechie.com.awsauth.utils.RetrieveUserCallback;
 import auth.aws.veechie.com.awsauth.utils.TimeStamp;
@@ -222,12 +221,9 @@ public class LoginActvity extends Activity implements
         then go to Username Activity
         TODO ---------------------------------------------------------------------------------------------------------------------
          */
-        mUser = new User();
-        mUser.setJoinDate(new TimeStamp().stamp());
-        mUser.setEmail(mEmail);
 //        TODO REMOVE THIS, NEW USER SHOULD ONLY BE CREATED AFTER THE USERNAME ACTIVITY
-        SaveUserAsync saveUserAsync = new SaveUserAsync(this, mCognitoTasks.getCredentialsProvider());
-        saveUserAsync.execute(mUser);
+//        SaveUserAsync saveUserAsync = new SaveUserAsync(this, mCognitoTasks.getCredentialsProvider());
+//        saveUserAsync.execute(mUser);
 
     }
 

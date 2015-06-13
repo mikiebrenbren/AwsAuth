@@ -27,7 +27,10 @@ public class UsernameActivity extends Activity {
     check to see if username is being used already and set username in the system already, if not add username to user table
     if username is taken toast and do nothing
 
-    CREATE A NEW USER  HERE
+    todo CREATE A NEW USER  HERE
+    todo MAKE SURE TO VALIDATE USERNAME TO MAKE SURE IT IS IN THE CORRECT FORMAT
+    todo MAKE SURE TO THEN VALIDATE AGAINST THE DB TO MAKE SURE NO OTHER USERS HAVE THIS USERNAME
+    todo IMPLEMENT TOAST ON ANY INVALID USERNAMES
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,9 @@ public class UsernameActivity extends Activity {
         mUserNameText = (TextView) findViewById(R.id.usernameActivityTextView);
         mUsernameEditText = (EditText) findViewById(R.id.usernameActivityEditText);
         mUsernameButton = (Button) findViewById(R.id.usernameActivityButton);
+
+
+
 
 
 
