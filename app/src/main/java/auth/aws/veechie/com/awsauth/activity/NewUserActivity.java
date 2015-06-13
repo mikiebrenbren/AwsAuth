@@ -1,9 +1,11 @@
-package auth.aws.veechie.com.awsauth;
+package auth.aws.veechie.com.awsauth.activity;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import auth.aws.veechie.com.awsauth.R;
 
 
 public class NewUserActivity extends ActionBarActivity {
