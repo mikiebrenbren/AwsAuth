@@ -85,7 +85,8 @@ public class LoginActvity extends Activity implements
     private SharedPreferences mSharedPreferences;
     private String mUsername;
     private User mUser;
-    Person mCurrentUser;
+    private Person mCurrentUser;
+    private String mEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,7 +189,7 @@ public class LoginActvity extends Activity implements
         Log.i(TAG, "onConnected");
 
         // Retrieve some profile information to personalize our app for the user.
-        Person currentUser = Plus.PeopleApi.getCurrentPerson(((GoogleClientApp)this.getApplication()).getGoogleApiClient());
+        mCurrentUser = Plus.PeopleApi.getCurrentPerson(((GoogleClientApp)this.getApplication()).getGoogleApiClient());
         Plus.PeopleApi.loadVisible(((GoogleClientApp)this.getApplication()).getGoogleApiClient(), null)
                 .setResultCallback(this);
 
@@ -205,27 +206,28 @@ public class LoginActvity extends Activity implements
 
 //        }else {
 
-            String email = Plus.AccountApi.getAccountName(((GoogleClientApp) this.getApplication()).getGoogleApiClient());
+            mEmail = Plus.AccountApi.getAccountName(((GoogleClientApp) this.getApplication()).getGoogleApiClient());
             Log.i(TAG, String.format(
                     getResources().getString(R.string.signed_in_as),
-                    currentUser.getDisplayName()) + "email is " + email);
+                    mCurrentUser.getDisplayName()) + "mEmail is " + mEmail);
 
         //checking to see if user is already in the database
         RetrieveUser retrieveUser = new RetrieveUser(this, mCognitoTasks.getCredentialsProvider());
-        retrieveUser.execute(email);
-        mUser = new User();
-        mUser.setJoinDate(new TimeStamp().stamp());
-        mUser.setEmail(email);
+        retrieveUser.execute(mEmail);
+
         /*
         TODO ---------------------------------------------------------------------------------------------------------------------
         need login here to verify that this is the users first time logging, if it is not send to UsernameActivity, otherwise
-        send the user to UserProfileActivity, will make query to aws with email, and search for a username, if username not there
+        send the user to UserProfileActivity, will make query to aws with mEmail, and search for a username, if username not there
         then go to Username Activity
         TODO ---------------------------------------------------------------------------------------------------------------------
          */
-
-            SaveUserAsync saveUserAsync = new SaveUserAsync(this, mCognitoTasks.getCredentialsProvider());
-            saveUserAsync.execute(mUser);
+        mUser = new User();
+        mUser.setJoinDate(new TimeStamp().stamp());
+        mUser.setEmail(mEmail);
+//        TODO REMOVE THIS, NEW USER SHOULD ONLY BE CREATED AFTER THE USERNAME ACTIVITY
+        SaveUserAsync saveUserAsync = new SaveUserAsync(this, mCognitoTasks.getCredentialsProvider());
+        saveUserAsync.execute(mUser);
 
     }
 
@@ -424,8 +426,16 @@ public class LoginActvity extends Activity implements
             startActivity(intent);
             finish();
         }else{
-            intent = new Intent(this, UsernameActivity.class);
-            startActivity(intent);
+            if(user.getEmail() != null) {
+                intent = new Intent(this, UsernameActivity.class);
+                startActivity(intent);
+            }else{
+                mUser = new User();
+                mUser.setJoinDate(new TimeStamp().stamp());
+                mUser.setEmail(mEmail);
+                intent = new Intent(this, UsernameActivity.class);
+                startActivity(intent);
+            }
         }
 
     }

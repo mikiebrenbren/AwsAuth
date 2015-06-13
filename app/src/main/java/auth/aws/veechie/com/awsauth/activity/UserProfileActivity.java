@@ -1,5 +1,6 @@
 package auth.aws.veechie.com.awsauth.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,7 +15,7 @@ import auth.aws.veechie.com.awsauth.R;
 import auth.aws.veechie.com.awsauth.application.GoogleClientApp;
 
 
-public class UserProfileActivity extends ActionBarActivity {
+public class UserProfileActivity extends Activity {
 
     public final String TAG = this.getClass().getSimpleName();
     protected TextView mSuccessFullLoginMessage;

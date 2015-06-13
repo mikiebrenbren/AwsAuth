@@ -26,6 +26,8 @@ public class UsernameActivity extends Activity {
     TODO
     check to see if username is being used already and set username in the system already, if not add username to user table
     if username is taken toast and do nothing
+
+    CREATE A NEW USER  HERE
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
