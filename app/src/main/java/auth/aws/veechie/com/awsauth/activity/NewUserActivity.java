@@ -1,5 +1,6 @@
 package auth.aws.veechie.com.awsauth.activity;
 
+import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,7 +9,7 @@ import android.view.MenuItem;
 import auth.aws.veechie.com.awsauth.R;
 
 
-public class NewUserActivity extends ActionBarActivity {
+public class NewUserActivity extends Activity {
 
     public final String TAG = this.getClass().getSimpleName();
 
