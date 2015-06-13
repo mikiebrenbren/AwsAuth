@@ -1,4 +1,4 @@
-package auth.aws.veechie.com.awsauth;
+package auth.aws.veechie.com.awsauth.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,10 +10,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import auth.aws.veechie.com.awsauth.R;
 import auth.aws.veechie.com.awsauth.application.GoogleClientApp;
 
 
-public class UserProfile extends ActionBarActivity {
+public class UserProfileActivity extends ActionBarActivity {
 
     public final String TAG = this.getClass().getSimpleName();
     protected TextView mSuccessFullLoginMessage;
@@ -26,6 +27,7 @@ public class UserProfile extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //TODO logic may not belong in the app, another way to do this would be to make a request to aws, to see if user has cognito token
         mSharedPreferences = getSharedPreferences(getResources().getString(R.string.my_shared_preferences), Context.MODE_PRIVATE);
         mIsUserSignedIn = ((GoogleClientApp)this.getApplication()).getmSignInProgress();
         ((GoogleClientApp) this.getApplication()).getmSignInProgress();

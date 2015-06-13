@@ -1,4 +1,4 @@
-package auth.aws.veechie.com.awsauth;
+package auth.aws.veechie.com.awsauth.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,18 +33,19 @@ import com.google.android.gms.plus.model.people.PersonBuffer;
 
 import java.util.ArrayList;
 
+import auth.aws.veechie.com.awsauth.R;
 import auth.aws.veechie.com.awsauth.application.CognitoTasks;
 import auth.aws.veechie.com.awsauth.application.GoogleClientApp;
+import auth.aws.veechie.com.awsauth.dynamodb.RetrieveUser;
 import auth.aws.veechie.com.awsauth.dynamodb.SaveUserAsync;
 import auth.aws.veechie.com.awsauth.model.User;
-import auth.aws.veechie.com.awsauth.samples.Book;
-import auth.aws.veechie.com.awsauth.samples.BookAsync;
+import auth.aws.veechie.com.awsauth.utils.RetrieveUserCallback;
 import auth.aws.veechie.com.awsauth.utils.TimeStamp;
 
 
 public class LoginActvity extends Activity implements
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
-        ResultCallback<People.LoadPeopleResult>, View.OnClickListener{
+        ResultCallback<People.LoadPeopleResult>, View.OnClickListener, RetrieveUserCallback {
 
     private static final int STATE_DEFAULT = 0;
     private static final int STATE_SIGN_IN = 1;
@@ -82,6 +83,9 @@ public class LoginActvity extends Activity implements
     protected Dataset mDataset;
     private CognitoTasks mCognitoTasks;
     private SharedPreferences mSharedPreferences;
+    private String mUsername;
+    private User mUser;
+    Person mCurrentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +180,7 @@ public class LoginActvity extends Activity implements
     * device, that the selected account has granted any requested permissions to
     * our app and that we were able to establish a service connection to Google
     * Play services.
+    * TODO this will have to be refactored for other authentication methods
     */
     @Override
     public void onConnected(Bundle connectionHint) {
@@ -184,47 +189,44 @@ public class LoginActvity extends Activity implements
 
         // Retrieve some profile information to personalize our app for the user.
         Person currentUser = Plus.PeopleApi.getCurrentPerson(((GoogleClientApp)this.getApplication()).getGoogleApiClient());
-
-        Log.i(TAG, String.format(
-                getResources().getString(R.string.signed_in_as),
-                currentUser.getDisplayName()));
-
-
-//        User user = new User();
-//        user.setUid(123445);
-//        user.setEmail("awsauth@gmail.com");
-//        user.setUsername("mikieawsauth");
-//
-//        SaveUserAsync saveUserAsync = new SaveUserAsync(this, mCognitoTasks.getCredentialsProvider());
-//        saveUserAsync.execute(user);
-        Book book = new Book();
-        book.setTitle("Great Expectations");
-        book.setAuthor("Charles Dickens");
-        book.setPrice(1299);
-        book.setIsbn("1234567890");
-        book.setHardCover(false);
-
-        BookAsync bookAsync = new BookAsync(this, mCognitoTasks.getCredentialsProvider());
-        bookAsync.execute(book);
-
-
         Plus.PeopleApi.loadVisible(((GoogleClientApp)this.getApplication()).getGoogleApiClient(), null)
                 .setResultCallback(this);
 
-        if(((GoogleClientApp)this.getApplication()).getmSignInProgress() == STATE_SIGN_IN) {
+        /*
+        if the user exists and has already signed in, then send directly to user profile, else send to username activity to
+        choose username, so if user is not signed in but does have a user name, the async task below should retrieve user data to confirm
+        user has a username, then send to UserProfile
+         */
+//        if(((GoogleClientApp)this.getApplication()).getmSignInProgress() == STATE_SIGN_IN) {
             //todo I don't think this is necessary after putting the google client at the application context
             editor = mSharedPreferences.edit();
             editor.putInt(getResources().getString(R.string.sign_in_progress_PREFKEY),  ((GoogleClientApp)this.getApplication()).getmSignInProgress()).apply();
             Log.i(TAG, "User is signed in");
-            Intent intent = new Intent(this, UserProfile.class);
-            intent.putExtra(USER_NAME, currentUser.getDisplayName());
-            intent.putExtra(getResources().getString(R.string.sign_in_progress), ((GoogleClientApp)this.getApplication()).getmSignInProgress());
-            startActivity(intent);
-            finish();
-        }
 
-        // Indicate that the sign in process is complete.
-//        mSignInProgress = STATE_DEFAULT;
+//        }else {
+
+            String email = Plus.AccountApi.getAccountName(((GoogleClientApp) this.getApplication()).getGoogleApiClient());
+            Log.i(TAG, String.format(
+                    getResources().getString(R.string.signed_in_as),
+                    currentUser.getDisplayName()) + "email is " + email);
+
+        //checking to see if user is already in the database
+        RetrieveUser retrieveUser = new RetrieveUser(this, mCognitoTasks.getCredentialsProvider());
+        retrieveUser.execute(email);
+        mUser = new User();
+        mUser.setJoinDate(new TimeStamp().stamp());
+        mUser.setEmail(email);
+        /*
+        TODO ---------------------------------------------------------------------------------------------------------------------
+        need login here to verify that this is the users first time logging, if it is not send to UsernameActivity, otherwise
+        send the user to UserProfileActivity, will make query to aws with email, and search for a username, if username not there
+        then go to Username Activity
+        TODO ---------------------------------------------------------------------------------------------------------------------
+         */
+
+            SaveUserAsync saveUserAsync = new SaveUserAsync(this, mCognitoTasks.getCredentialsProvider());
+            saveUserAsync.execute(mUser);
+
     }
 
     @Override
@@ -412,4 +414,19 @@ public class LoginActvity extends Activity implements
         mCredentialsProvider = mCognitoTasks.getCredentialsProvider();
     }
 
+    @Override
+    public void onUserRetrieved(User user) {
+        Intent intent;
+        if(user.getUsername() != null) {
+            intent = new Intent(this, UserProfileActivity.class);
+            intent.putExtra(USER_NAME, mCurrentUser.getDisplayName());
+            intent.putExtra(getResources().getString(R.string.sign_in_progress), ((GoogleClientApp)this.getApplication()).getmSignInProgress());
+            startActivity(intent);
+            finish();
+        }else{
+            intent = new Intent(this, UsernameActivity.class);
+            startActivity(intent);
+        }
+
+    }
 }
