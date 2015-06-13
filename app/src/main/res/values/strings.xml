@@ -61,5 +61,11 @@
 
     <string name="google_client_id">1006493570543-04qlpcu2ov546vd5btj5hl4l6bf88obj.apps.googleusercontent.com</string>
     <string name="identity_pool_id">"us-east-1:e2b350b7-206c-4970-9331-c0c1fb66ad87"</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Username Activity-->
+    <string name="title_activity_username">UsernameActivity</string>
+    <string name="username_string">choose a username</string>
+    <string name="username_button_username_activity">OK</string>
 
 </resources>

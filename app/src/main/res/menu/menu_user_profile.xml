@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:context="auth.aws.veechie.com.awsauth.UserProfile">
+      tools:context="auth.aws.veechie.com.awsauth.activity.UserProfileActivity">
     <item android:id="@+id/action_settings"
           android:title="@string/action_settings_text"
           android:orderInCategory="100"

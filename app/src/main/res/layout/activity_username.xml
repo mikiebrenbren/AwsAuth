@@ -1,0 +1,45 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                tools:context="auth.aws.veechie.com.awsauth.activity.UsernameActivity"
+                android:background="#ff2196f3"
+                android:minHeight="88dp"
+                android:minWidth="36dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/username_string"
+        android:id="@+id/usernameActivityTextView"
+        android:gravity="center"
+        android:layout_above="@+id/usernameActivityEditText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="49dp"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/usernameActivityEditText"
+        android:inputType="none"
+        android:background="#90CAF9"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:clickable="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/username_button_username_activity"
+        android:id="@+id/usernameActivityButton"
+        android:layout_below="@+id/usernameActivityEditText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp"/>
+</RelativeLayout>

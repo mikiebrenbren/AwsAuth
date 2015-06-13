@@ -15,8 +15,8 @@ import auth.aws.veechie.com.awsauth.model.User;
  */
 public class SaveUserAsync extends AsyncTask <User, Void, Void>{
 
-    private AmazonDynamoDBClient mAmazonDynamoDBClient;
     private DynamoDBMapper mDynamoDBMapper;
+    private AmazonDynamoDBClient mAmazonDynamoDBClient;
     private Context mContext;
     private CognitoCredentialsProvider mCognitoCredentialsProvider;
 
