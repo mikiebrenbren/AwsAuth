@@ -1,4 +1,4 @@
-package auth.aws.veechie.com.awsauth.dynamodb;
+package auth.aws.veechie.com.awsauth.dynamodb.user;
 
 import android.content.Context;
 import android.content.SharedPreferences;
