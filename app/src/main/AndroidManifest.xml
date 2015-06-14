@@ -43,7 +43,8 @@
         <activity
             android:name=".activity.UsernameActivity"
             android:label="@string/title_activity_username"
-            android:parentActivityName=".activity.LoginActvity" >
+            android:parentActivityName=".activity.LoginActvity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="auth.aws.veechie.com.awsauth.activity.LoginActvity" />

@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import auth.aws.veechie.com.awsauth.R;
 import auth.aws.veechie.com.awsauth.application.CognitoTasks;
 import auth.aws.veechie.com.awsauth.application.GoogleClientApp;
-import auth.aws.veechie.com.awsauth.dynamodb.RetrieveUser;
+import auth.aws.veechie.com.awsauth.dynamodb.user.RetrieveUser;
 import auth.aws.veechie.com.awsauth.model.User;
 import auth.aws.veechie.com.awsauth.utils.RetrieveUserCallback;
 import auth.aws.veechie.com.awsauth.utils.TimeStamp;
