@@ -1,4 +1,4 @@
-package auth.aws.veechie.com.awsauth.dynamodb;
+package auth.aws.veechie.com.awsauth.dynamodb.user;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,13 +7,12 @@ import com.amazonaws.auth.CognitoCredentialsProvider;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import auth.aws.veechie.com.awsauth.model.User;
-import auth.aws.veechie.com.awsauth.utils.RetrieveUserCallback;
+import auth.aws.veechie.com.awsauth.utils.callback.RetrieveUserCallback;
 
 /**
  * Created by michaelbrennan on 6/8/15.
- *
  */
-public class RetrieveUser extends AsyncTask<String, Void, User> {
+public class RetrieveUserAsync extends AsyncTask<String, Void, User> {
 
     public final String TAG = this.getClass().getSimpleName();
     private DynamoDBMapper mDynamoDBMapper;
@@ -23,7 +22,7 @@ public class RetrieveUser extends AsyncTask<String, Void, User> {
     private SharedPreferences mSharedPreferences;
     private RetrieveUserCallback mRetrieveUserCallback;
 
-    public RetrieveUser(RetrieveUserCallback context, CognitoCredentialsProvider cognitoCredentialsProvider){
+    public RetrieveUserAsync(RetrieveUserCallback context, CognitoCredentialsProvider cognitoCredentialsProvider){
         mCognitoCredentialsProvider = cognitoCredentialsProvider;
         mRetrieveUserCallback = context;
     }
