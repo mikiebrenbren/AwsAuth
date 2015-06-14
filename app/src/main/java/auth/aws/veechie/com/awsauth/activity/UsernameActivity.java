@@ -1,8 +1,10 @@
 package auth.aws.veechie.com.awsauth.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -10,6 +12,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import auth.aws.veechie.com.awsauth.R;
+import auth.aws.veechie.com.awsauth.dynamodb.SaveUserAsync;
+import auth.aws.veechie.com.awsauth.model.User;
 
 /**
  * user should only see this class if it is the users first time signing in, they will set their username here for the first
@@ -17,6 +21,7 @@ import auth.aws.veechie.com.awsauth.R;
  */
 public class UsernameActivity extends Activity {
 
+    public final String TAG = this.getClass().getSimpleName();
 
     TextView mUserNameText;
     EditText mUsernameEditText;
@@ -41,9 +46,13 @@ public class UsernameActivity extends Activity {
         mUsernameEditText = (EditText) findViewById(R.id.usernameActivityEditText);
         mUsernameButton = (Button) findViewById(R.id.usernameActivityButton);
 
+        Intent intent = getIntent();
+        User newUser = intent.getParcelableExtra("newUser");
+        Log.i(TAG, "This is the user email and joindate " + newUser.getEmail() + " " + newUser.getJoinDate());
 
-
-
+//
+//        SaveUserAsync saveUserAsync = new SaveUserAsync(this, mCognitoTasks.getCredentialsProvider());
+//        saveUserAsync.execute(mUser);
 
 
     }

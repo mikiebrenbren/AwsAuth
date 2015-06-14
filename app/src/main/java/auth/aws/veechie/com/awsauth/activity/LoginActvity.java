@@ -202,7 +202,6 @@ public class LoginActvity extends Activity implements
             editor = mSharedPreferences.edit();
             editor.putInt(getResources().getString(R.string.sign_in_progress_PREFKEY),  ((GoogleClientApp)this.getApplication()).getmSignInProgress()).apply();
             Log.i(TAG, "User is signed in");
-
 //        }else {
 
             mEmail = Plus.AccountApi.getAccountName(((GoogleClientApp) this.getApplication()).getGoogleApiClient());
@@ -424,12 +423,16 @@ public class LoginActvity extends Activity implements
         }else{
             if(user.getEmail() != null) {
                 intent = new Intent(this, UsernameActivity.class);
+                Log.i(TAG, "This is the user email and joindate being passed in the intent " + user.getEmail() + " " + user.getJoinDate());
+                intent.putExtra("newUser", user);
                 startActivity(intent);
             }else{
-                mUser = new User();
-                mUser.setJoinDate(new TimeStamp().stamp());
-                mUser.setEmail(mEmail);
+                user = new User();
+                user.setJoinDate(new TimeStamp().stamp());
+                user.setEmail(mEmail);
+                Log.i(TAG, "This is the user email and joindate being passed in the intent" + user.getEmail() + " " + user.getJoinDate());
                 intent = new Intent(this, UsernameActivity.class);
+                intent.putExtra("newUser", user);
                 startActivity(intent);
             }
         }

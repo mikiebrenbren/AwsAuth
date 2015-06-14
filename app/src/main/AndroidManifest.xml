@@ -19,7 +19,8 @@
         </activity>
         <activity
             android:name=".activity.LoginActvity"
-            android:label="@string/title_activity_login_actvity" >
+            android:label="@string/title_activity_login_actvity"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".activity.NewUserActivity"
