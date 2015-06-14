@@ -1,4 +1,4 @@
-package auth.aws.veechie.com.awsauth.utils;
+package auth.aws.veechie.com.awsauth.utils.callback;
 
 import auth.aws.veechie.com.awsauth.model.User;
 

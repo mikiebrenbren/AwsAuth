@@ -14,21 +14,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import auth.aws.veechie.com.awsauth.R;
+import auth.aws.veechie.com.awsauth.application.CognitoTasks;
+import auth.aws.veechie.com.awsauth.application.GoogleClientApp;
+import auth.aws.veechie.com.awsauth.dynamodb.user.PutUsernameAsync;
+import auth.aws.veechie.com.awsauth.dynamodb.user.SaveUserAsync;
 import auth.aws.veechie.com.awsauth.model.User;
 import auth.aws.veechie.com.awsauth.utils.UsernameValidator;
+import auth.aws.veechie.com.awsauth.utils.callback.PutUsernameCallback;
 
 /**
  * user should only see this class if it is the users first time signing in, they will set their username here for the first
  * time.  Any subsequent time will be set in the shared preferences.  This class goes to UserProfile, needs to killed when completed i.e. finish()
  */
-public class UsernameActivity extends Activity implements View.OnClickListener {
+public class UsernameActivity extends Activity implements View.OnClickListener, PutUsernameCallback {
 
-    public final String TAG = this.getClass().getSimpleName();
-
-    SharedPreferences prefs;
-    TextView mUserNameText;
-    EditText mUsernameEditText;
-    Button mUsernameButton;
+    private final String TAG = this.getClass().getSimpleName();
+    private SharedPreferences prefs;
+    private TextView mUserNameText;
+    private EditText mUsernameEditText;
+    private Button mUsernameButton;
+    private User mUser;
+    private static final String PUT_SUCCESS = "SUCCESS";
+    private static final String PUT_FAIL = "FAIL";
+    private String mSuccessfulUpdate;
 
     /*
     TODO
@@ -49,12 +57,11 @@ public class UsernameActivity extends Activity implements View.OnClickListener {
         mUsernameButton = (Button) findViewById(R.id.usernameActivityButton);
 
         Intent intent = getIntent();
-        User newUser = intent.getParcelableExtra("newUser");
-        Log.i(TAG, "This is the user email and joindate " + newUser.getEmail() + " " + newUser.getJoinDate());
+        mUser = intent.getParcelableExtra("newUser");
+        Log.i(TAG, "This is the user email and joindate " + mUser.getEmail() + " " + mUser.getJoinDate());
 
         mUsernameButton.setOnClickListener(this);
-//        SaveUserAsync saveUserAsync = new SaveUserAsync(this, mCognitoTasks.getCredentialsProvider());
-//        saveUserAsync.execute(mUser);
+
 
 
     }
@@ -63,11 +70,24 @@ public class UsernameActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
 
         String potentialUsername = mUsernameEditText.getText().toString();
+        Intent intent;
         if(new UsernameValidator().validate(potentialUsername)){
             //check db to see if user name is taken toast username is taken
+            PutUsernameAsync usernameAsync = new PutUsernameAsync(this, potentialUsername);
+            usernameAsync.execute(mUser);
             //todo if true move on to new activity
-            //todo if false toast
-
+            if(mSuccessfulUpdate.equals(PUT_SUCCESS)){
+                SaveUserAsync saveUserAsync = new SaveUserAsync(this, ((CognitoTasks) this.getApplication()).getCredentialsProvider());
+                saveUserAsync.execute(mUser);
+                intent = new Intent(this, UserProfileActivity.class);
+                startActivity(intent);
+            }else{
+                Toast.makeText(
+                        this,
+                        "Bummer! " + potentialUsername + " has already been taken, try again",
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
         }else {
             //todo toast could be better, could be specific to length, and particular characters that are being entered
             Toast.makeText(
@@ -100,5 +120,15 @@ public class UsernameActivity extends Activity implements View.OnClickListener {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void OnUserPut(boolean b) {
+        if(b){
+            mSuccessfulUpdate = PUT_SUCCESS;
+        }else{
+            mSuccessfulUpdate = PUT_FAIL;
+        }
     }
 }

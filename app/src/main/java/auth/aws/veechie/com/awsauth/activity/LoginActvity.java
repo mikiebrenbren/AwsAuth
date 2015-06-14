@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.cognito.CognitoSyncManager;
 import com.amazonaws.mobileconnectors.cognito.Dataset;
@@ -30,15 +29,13 @@ import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.android.gms.plus.model.people.PersonBuffer;
-
 import java.util.ArrayList;
-
 import auth.aws.veechie.com.awsauth.R;
 import auth.aws.veechie.com.awsauth.application.CognitoTasks;
 import auth.aws.veechie.com.awsauth.application.GoogleClientApp;
-import auth.aws.veechie.com.awsauth.dynamodb.user.RetrieveUser;
+import auth.aws.veechie.com.awsauth.dynamodb.user.RetrieveUserAsync;
 import auth.aws.veechie.com.awsauth.model.User;
-import auth.aws.veechie.com.awsauth.utils.RetrieveUserCallback;
+import auth.aws.veechie.com.awsauth.utils.callback.RetrieveUserCallback;
 import auth.aws.veechie.com.awsauth.utils.TimeStamp;
 
 
@@ -104,7 +101,7 @@ public class LoginActvity extends Activity implements
             onSignedOut();
         }
 
-        initializeCredentialsProvider();  //TODO COGNITO
+        initializeCredentialsProvider();
 
         mCirclesList = new ArrayList<>();
         mCirclesAdapter = new ArrayAdapter<>(
@@ -210,8 +207,8 @@ public class LoginActvity extends Activity implements
                     mCurrentUser.getDisplayName()) + "mEmail is " + mEmail);
 
         //checking to see if user is already in the database
-        RetrieveUser retrieveUser = new RetrieveUser(this, mCognitoTasks.getCredentialsProvider());
-        retrieveUser.execute(mEmail);
+        RetrieveUserAsync retrieveUserAsync = new RetrieveUserAsync(this, mCognitoTasks.getCredentialsProvider());
+        retrieveUserAsync.execute(mEmail);
 
         /*
         TODO ---------------------------------------------------------------------------------------------------------------------
